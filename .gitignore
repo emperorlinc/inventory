@@ -1,3 +1,4 @@
 venv
 inventory/__pycache__
 core/__pycache__
+db.sqlite3
