@@ -87,8 +87,8 @@ class Product(models.Model):
 
     @property
     def total_quantity_func(self):
-        total_quantity = self.total_quantity = self.quantity
-        return total_quantity
+        self.total_quantity = self.quantity
+        return self.total_quantity
 
     def __str__(self) -> str:
         return self.name
