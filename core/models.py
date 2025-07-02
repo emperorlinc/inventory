@@ -72,7 +72,7 @@ class Product(models.Model):
     created_by = models.ForeignKey(
         User, related_name="product_created_by", on_delete=models.CASCADE)
     updated_by = models.ForeignKey(
-        User, related_name="product_updated_by", on_delete=models.CASCADE)
+        User, related_name="product_updated_by", on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")
@@ -106,7 +106,7 @@ class Sale(models.Model):
     created_by = models.ForeignKey(
         User, related_name="sale_created_by", on_delete=models.CASCADE)
     updated_by = models.ForeignKey(
-        User, related_name="sale_updated_by", on_delete=models.CASCADE)
+        User, related_name="sale_updated_by", on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         ordering = ("-created_at", "-updated_at")

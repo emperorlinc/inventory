@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+
+
+{% block content %}
+
+
+<div class="sale-wrapper">
+    {% for sale in sales %}
+    
+    {{ sale }}
+    
+    {% empty %}
+    
+    No sale record yet.
+    
+    {% endfor %}
+</div>
+
+<a href="{% url 'core:sale-create' %}">Create sale</a>
+
+{% endblock content %}
+
+{% comment %} {{ request.user }} {% endcomment %}

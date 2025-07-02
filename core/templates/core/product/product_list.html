@@ -1,0 +1,20 @@
+{% extends "main.html" %}
+
+
+{% block content %}
+
+<div class="product-wrapper">
+    {% for product in products %}
+    
+    {{ product }}
+    
+    {% empty %}
+    
+    No product record yet.
+    
+    {% endfor %}
+</div>
+
+<a href="{% url 'core:product-create' %}">Create product</a>
+
+{% endblock content %}
