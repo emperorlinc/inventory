@@ -1,0 +1,19 @@
+<h4>Login Form.</h4>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="email">Email: </label>
+    <input type="email" name="email">
+
+    <label for="password">Password: </label>
+    <input type="password" name="password">
+
+    <button type="submit">Login</button>
+</form>
+
+{% comment %} <p>
+    You don't have an account yet? 
+    <a href="{% url 'core:register' %}">
+        Register
+    </a>
+</p> {% endcomment %}
