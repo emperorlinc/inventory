@@ -12,6 +12,9 @@ urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
 
+    path("categories/", views.category_list_view, name="category"),
+    path("category/create/", views.category_create_view, name="category-create"),
+
     path("products/", views.product_list_view, name="products"),
     path("product/create/", views.product_create_view, name="product-create"),
 
