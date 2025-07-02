@@ -137,7 +137,11 @@ def category_update_view(request, pk):
 def category_delete_view(request, pk):
     page = "Category Delete"
 
-    category = Category.objects.get(id=pk)
+    try:
+        category = Category.objects.get(id=pk)
+    except:
+        messages.error(request, "No category with the provided id.")
+        return redirect("core:category")
 
     if request.method == "POST":
         category.delete()
@@ -151,6 +155,16 @@ def product_list_view(request):
 
     products = Product.objects.all()
     return render(request, "core/product/product_list.html", {"products": products, "page": page})
+
+
+def product_detail_view(request, pk):
+    page = "Product Detail"
+    try:
+        product = Product.objects.get(id=pk)
+    except:
+        messages.error(request, "No product with the provided id.")
+        return redirect("core:products")
+    return render(request, "core/product/product_detail.html", {"product": product, "page": page})
 
 
 def product_create_view(request):
@@ -177,6 +191,46 @@ def product_create_view(request):
     return render(request, "core/product/product_create.html", {"form": form, "page": page})
 
 
+def product_update_view(request, pk):
+    page = "Product Update"
+
+    try:
+        product = Product.objects.get(id=pk)
+    except:
+        messages.error(request, "No product with the provided id.")
+        return redirect(reverse("core:product-detail", kwargs={"id": pk}))
+
+    form = ProductForm(instance=product)
+    if request.method == "POST":
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            form.save(commit=False)
+            form.updated_by = request.user
+            form.save()
+            messages.success(request, "Product updated successfully.")
+            return redirect(reverse("core:product-detail", kwargs={"id": pk}))
+        else:
+            messages.error(request, "Invalid values provided.")
+            return redirect(reverse("core:product-update", kwargs={"id": pk}))
+    return render(request, "core/product/product_update.html", {"form": form, "page": page})
+
+
+def product_delete_view(request, pk):
+    page = "Product Delete"
+
+    try:
+        product = Product.objects.get(id=pk)
+    except:
+        messages.error(request, "No product with the provided id.")
+        return redirect("core:products")
+
+    if request.method == "POST":
+        product.delete()
+        messages.success(request, "Product deleted successfully.")
+        return redirect("core:products")
+    return render(request, "core/delete.html", {"obj": product, "page": page})
+
+
 def sales_list_view(request):
     page = "Sales"
 
@@ -184,7 +238,19 @@ def sales_list_view(request):
     return render(request, "core/sale/sales_list.html", {"sales": sales, "page": page})
 
 
-def create_sale_view(request):
+def sale_detail_view(request, pk):
+    page = "Sale Detail"
+
+    try:
+        sale = Sale.objects.get(id=pk)
+    except:
+        messages.error(request, "No sale with the provided id.")
+        return redirect("core:sales")
+
+    return render(request, "core/sale/sale_detail.html", {"sale": sale, "page": page})
+
+
+def sale_create_view(request):
     page = "Sale Create"
 
     form = SaleForm()
@@ -207,3 +273,43 @@ def create_sale_view(request):
             messages.error(request, "Invalid form.")
             return redirect("core:sale-create")
     return render(request, "core/sale/sale_create.html", {"form": form, "page": page})
+
+
+def sale_update_view(request, pk):
+    page = "Sale Update"
+
+    try:
+        sale = Sale.objects.get(id=pk)
+    except:
+        messages.error(request, "No sale with the provided id.")
+        return redirect(reverse("core:sale-detail", kwargs={"id": pk}))
+
+    form = SaleForm(instance=sale)
+    if request.method == "POST":
+        form = SaleForm(request.POST, instance=sale)
+
+        if form.is_valid():
+            form.save(commit=False)
+            form.updated_by = request.user
+            form.save()
+            messages.success(request, "Sale updated successfully.")
+            return redirect(reverse("core:sale-detail", kwargs={"id": pk}))
+        else:
+            messages.error(request, "Invalid values provided.")
+            return redirect(reverse("core:sale-update", kwargs={"id": pk}))
+    return render(request, "core/sale/sale_update.html", {"form": form, "page": page})
+
+
+def sale_delete_view(request, pk):
+    page = "Sale Delete"
+
+    try:
+        sale = Sale.objects.get(id=pk)
+    except:
+        messages.error(request, "No sale for the provided id.")
+        return redirect("core:sales")
+    if request.method == "POST":
+        sale.delete()
+        messages.success(request, "Sale deleted successfully.")
+        return redirect("core:sales")
+    return render(request, "core/delete.html", {"obj": sale, "page": page})

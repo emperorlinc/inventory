@@ -24,7 +24,16 @@ urlpatterns = [
 
     path("products/", views.product_list_view, name="products"),
     path("product/create/", views.product_create_view, name="product-create"),
+    path("product/detail/<str:pk>/",
+         views.product_detail_view, name="product-detial"),
+    path("product/update/<str:pk>/",
+         views.product_update_view, name="product-update"),
+    path("product/delete/<str:pk>/",
+         views.product_delete_view, name="product-delete"),
 
     path("sales/", views.sales_list_view, name="sales"),
-    path("sale/create/", views.create_sale_view, name="sale-create"),
+    path("sale/create/", views.sale_create_view, name="sale-create"),
+    path("sale/detail/<str:pk>/", views.sale_detail_view, name="sale-detial"),
+    path("sale/update/<str:pk>/", views.sale_update_view, name="sale-update"),
+    path("sale/delete/<str:pk>/", views.sale_delete_view, name="sale-delete"),
 ]

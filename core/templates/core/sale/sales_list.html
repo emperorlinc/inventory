@@ -3,6 +3,7 @@
 
 {% block content %}
 
+<a href="{% url 'core:sale-create' %}">Create sale</a>
 
 <div class="sale-wrapper">
     {% for sale in sales %}
@@ -15,8 +16,6 @@
     
     {% endfor %}
 </div>
-
-<a href="{% url 'core:sale-create' %}">Create sale</a>
 
 {% endblock content %}
 
