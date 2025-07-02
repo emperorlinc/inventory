@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<a href="{% url 'core:category-create' %}">Create category.</a>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Submit</button>
+    </form>
+
+{% endblock content %}

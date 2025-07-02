@@ -14,6 +14,13 @@ urlpatterns = [
 
     path("categories/", views.category_list_view, name="category"),
     path("category/create/", views.category_create_view, name="category-create"),
+    path("category/detail/<str:pk>/",
+         views.category_detail_view, name="category-detail"),
+    path("category/update/<str:pk>/",
+         views.category_update_view, name="category-update"),
+    path("category/delete/<str:pk>/",
+         views.category_delete_view, name="category-delete"),
+
 
     path("products/", views.product_list_view, name="products"),
     path("product/create/", views.product_create_view, name="product-create"),

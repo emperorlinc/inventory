@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse
 
-from core.forms import ProductForm, SaleForm
-from core.models import Product, User, Sale
+from core.forms import CategoryForm, ProductForm, SaleForm
+from core.models import Category, Product, User, Sale
 
 # Create your views here.
 
@@ -72,6 +73,79 @@ def logout_view(request):
     return render(request, "core/authentication/logout.html", {"page": page})
 
 
+def category_list_view(request):
+    page = "Category"
+
+    categories = Category.objects.all()
+    return render(request, "core/category/category_list.html", {"categories": categories, "page": page})
+
+
+def category_detail_view(request, pk):
+    page = "Category Product"
+
+    try:
+        category = Category.objects.get(id=pk)
+        products = Product.objects.filter(category=category)
+    except:
+        messages.error(request, "No category with the provided id.")
+        return redirect("core:category")
+
+    return render(request, "core/category/category_detail.html", {"products": products, "category": category, "page": page})
+
+
+def category_create_view(request):
+    page = "Category Create"
+
+    form = CategoryForm()
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category created successfully.")
+            return redirect("core:category")
+        else:
+            messages.error(request, "Provide a valid category name.")
+            return redirect("core:category-create")
+    return render(request, "core/category/category_create.html", {"form": form, "page": page})
+
+
+def category_update_view(request, pk):
+    page = "Category Update"
+
+    try:
+        category = Category.object.get(id=pk)
+    except:
+        messages.error(request, "No category with the provided id.")
+        return redirect(reverse("core:category-update",  kwargs={"id": pk}))
+
+    form = CategoryForm(instance=category)
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Category updated successfully.")
+            return redirect("core:category")
+        else:
+            messages.error(request, "Invalid value provided.")
+            return redirect(reverse("core:category-update", kwargs={"id": pk}))
+    return render(request, "core/category/category_update.html", {"form": form, "page": page})
+
+
+def category_delete_view(request, pk):
+    page = "Category Delete"
+
+    category = Category.objects.get(id=pk)
+
+    if request.method == "POST":
+        category.delete()
+        messages.success(request, "Category deleted successfully.")
+        return redirect("core:category")
+    return render(request, "core/delete.html", {"obj": category, "page": page})
+
+
 def product_list_view(request):
     page = "Products"
 
@@ -88,7 +162,7 @@ def product_create_view(request):
         form = ProductForm(request.POST)
 
         if form.is_valid():
-            form.save(commit=False)
+            form = form.save(commit=False)
             form.total_quantity = form.total_quantity_func
             form.total_amount = form.total_func
             form.balance = form.balance_func

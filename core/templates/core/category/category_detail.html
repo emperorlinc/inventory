@@ -3,19 +3,17 @@
 
 {% block content %}
 
-<a href="{% url 'core:product-create' %}">Create product</a>
-
 <div class="product-wrapper">
     {% for product in products %}
     
-    {{ product }}
+        {{ product }}
+
     
     {% empty %}
     
-    No product record yet.
+        No product in {{ category }} category yet.
     
     {% endfor %}
 </div>
-
 
 {% endblock content %}
