@@ -2,9 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from core.forms import CategoryForm, ProductForm, SaleForm
 from core.models import Category, Product, User, Sale
+from core.permissions import is_logged_in, max_authorization
 
 # Create your views here.
 
@@ -18,6 +20,8 @@ def index_view(request):
     return render(request, "index.html", {"page": page})
 
 
+@max_authorization
+@login_required(login_url="core:login")
 def register_view(request):
     page = "Register"
 
@@ -45,6 +49,7 @@ def register_view(request):
     return render(request, "core/authentication/register.html", {"page": page})
 
 
+@is_logged_in
 def login_view(request):
     page = "Login"
 
@@ -64,6 +69,7 @@ def login_view(request):
     return render(request, "core/authentication/login.html", {"page": page})
 
 
+@login_required(login_url="core:login")
 def logout_view(request):
     page = "Logout"
 
@@ -73,6 +79,7 @@ def logout_view(request):
     return render(request, "core/authentication/logout.html", {"page": page})
 
 
+@login_required(login_url="core:login")
 def category_list_view(request):
     page = "Category"
 
@@ -80,6 +87,7 @@ def category_list_view(request):
     return render(request, "core/category/category_list.html", {"categories": categories, "page": page})
 
 
+@login_required(login_url="core:login")
 def category_detail_view(request, pk):
     page = "Category Product"
 
@@ -93,6 +101,7 @@ def category_detail_view(request, pk):
     return render(request, "core/category/category_detail.html", {"products": products, "category": category, "page": page})
 
 
+@login_required(login_url="core:login")
 def category_create_view(request):
     page = "Category Create"
 
@@ -111,6 +120,8 @@ def category_create_view(request):
     return render(request, "core/category/category_create.html", {"form": form, "page": page})
 
 
+@max_authorization
+@login_required(login_url="core:login")
 def category_update_view(request, pk):
     page = "Category Update"
 
@@ -134,6 +145,8 @@ def category_update_view(request, pk):
     return render(request, "core/category/category_update.html", {"form": form, "page": page})
 
 
+@max_authorization
+@login_required(login_url="core:login")
 def category_delete_view(request, pk):
     page = "Category Delete"
 
@@ -150,6 +163,7 @@ def category_delete_view(request, pk):
     return render(request, "core/delete.html", {"obj": category, "page": page})
 
 
+@login_required(login_url="core:login")
 def product_list_view(request):
     page = "Products"
 
@@ -157,6 +171,7 @@ def product_list_view(request):
     return render(request, "core/product/product_list.html", {"products": products, "page": page})
 
 
+@login_required(login_url="core:login")
 def product_detail_view(request, pk):
     page = "Product Detail"
     try:
@@ -167,6 +182,7 @@ def product_detail_view(request, pk):
     return render(request, "core/product/product_detail.html", {"product": product, "page": page})
 
 
+@login_required(login_url="core:login")
 def product_create_view(request):
     page = "Product Create"
 
@@ -191,6 +207,8 @@ def product_create_view(request):
     return render(request, "core/product/product_create.html", {"form": form, "page": page})
 
 
+@max_authorization
+@login_required(login_url="core:login")
 def product_update_view(request, pk):
     page = "Product Update"
 
@@ -215,6 +233,8 @@ def product_update_view(request, pk):
     return render(request, "core/product/product_update.html", {"form": form, "page": page})
 
 
+@max_authorization
+@login_required(login_url="core:login")
 def product_delete_view(request, pk):
     page = "Product Delete"
 
@@ -231,6 +251,7 @@ def product_delete_view(request, pk):
     return render(request, "core/delete.html", {"obj": product, "page": page})
 
 
+@login_required(login_url="core:login")
 def sales_list_view(request):
     page = "Sales"
 
@@ -238,6 +259,7 @@ def sales_list_view(request):
     return render(request, "core/sale/sales_list.html", {"sales": sales, "page": page})
 
 
+@login_required(login_url="core:login")
 def sale_detail_view(request, pk):
     page = "Sale Detail"
 
@@ -250,6 +272,7 @@ def sale_detail_view(request, pk):
     return render(request, "core/sale/sale_detail.html", {"sale": sale, "page": page})
 
 
+@login_required(login_url="core:login")
 def sale_create_view(request):
     page = "Sale Create"
 
@@ -275,6 +298,8 @@ def sale_create_view(request):
     return render(request, "core/sale/sale_create.html", {"form": form, "page": page})
 
 
+@max_authorization
+@login_required(login_url="core:login")
 def sale_update_view(request, pk):
     page = "Sale Update"
 
@@ -300,6 +325,8 @@ def sale_update_view(request, pk):
     return render(request, "core/sale/sale_update.html", {"form": form, "page": page})
 
 
+@max_authorization
+@login_required(login_url="core:login")
 def sale_delete_view(request, pk):
     page = "Sale Delete"
 

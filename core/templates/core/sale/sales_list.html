@@ -8,7 +8,7 @@
 <div class="sale-wrapper">
     {% for sale in sales %}
     
-    {{ sale }}
+    <a href="{% url 'core:sale-detail' sale.id %}">{{ sale }}</a>
     
     {% empty %}
     

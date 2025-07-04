@@ -8,7 +8,7 @@
 <div class="product-wrapper">
     {% for product in products %}
     
-    {{ product }}
+    <a href="{% url 'core:product-detail' product.id %}">{{ product }}</a>
     
     {% empty %}
     
