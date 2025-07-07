@@ -57,16 +57,8 @@ class Product(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    balance = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True)
     quantity = models.PositiveSmallIntegerField()
-    total_quantity = models.PositiveSmallIntegerField(
-        blank=True, null=True)
     catergory = models.ManyToManyField(Category)
-    status = models.CharField(
-        max_length=2, choices=STATUS, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
@@ -125,3 +117,26 @@ class Sale(models.Model):
 
     def __str__(self) -> str:
         return self.product.name
+
+
+class Order(models.Model):
+    """
+        Model to store ordered product, delivery date, distributor's contact, ordered date, product quantity, product price.
+    """
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveSmallIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    contact = models.CharField(help_text="Distributor contact", max_length=15)
+    delivery_date = models.DurationField()
+    order_date = models.DateTimeField(auto_now=True)
+    created_by = models.ForeignKey(
+        User, related_name="order_created_by", on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=2, choices=STATUS, blank=True, null=True)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    balance = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    total_quantity = models.PositiveSmallIntegerField(
+        blank=True, null=True)
+    catergory = models.ManyToManyField(Category)
