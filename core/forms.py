@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from core.models import Category, Product, Sale
+from core.models import Category, Order, Product, Sale
 
 
 class CategoryForm(ModelForm):
@@ -13,8 +13,14 @@ class ProductForm(ModelForm):
     class Meta:
         model = Product
         fields = "__all__"
-        exclude = ("balance", "total_amount", "created_by",
-                   "updated_by", "total_quantity")
+        exclude = ("created_by", "updated_by")
+
+
+class OrderForm(ModelForm):
+    class Meta:
+        model = Order
+        fields = "__all__"
+        exclude = ("balance", "total_amount", "created_by", "updated_by")
 
 
 class SaleForm(ModelForm):

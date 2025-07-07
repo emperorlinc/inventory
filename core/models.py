@@ -35,6 +35,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ('name',)
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.PositiveIntegerField(unique=True, blank=True, null=True)
+    address = models.CharField(max_length=64, blank=True, null=True)
+    photo = models.ImageField(upload_to="img", blank=True, null=True)
+
+
 class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)
 
@@ -46,14 +53,13 @@ class Category(models.Model):
 
 
 STATUS = (
-    ("U", "Unpaid"),
+    ("UP", "Unpaid"),
     ("PP", "Partly paid"),
     ("FP", "Fully paid"),
 )
 
 
 class Product(models.Model):
-
     name = models.CharField(max_length=50)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
@@ -69,6 +75,38 @@ class Product(models.Model):
     class Meta:
         ordering = ("-created_at", "-updated_at")
 
+    def __str__(self) -> str:
+        return self.name
+
+
+class Order(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveSmallIntegerField()
+    contact = models.CharField(help_text="Distributor contact", max_length=15)
+    delivery_date = models.DurationField()
+    order_date = models.DateTimeField(auto_now=True)
+    status = models.CharField(
+        max_length=2, choices=STATUS, blank=True, null=True)
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    balance = models.DecimalField(
+        max_digits=10, decimal_places=2, blank=True, null=True)
+    total_quantity = models.PositiveSmallIntegerField(
+        blank=True, null=True)
+    catergory = models.ManyToManyField(Category)
+    created_at = models.DateTimeField(auto_now=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        User, related_name="order_created_by", on_delete=models.CASCADE)
+    updated_by = models.ForeignKey(
+        User, related_name="order_updated_by", on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ("-created_at", "-updated_at")
+
+    def __str__(self) -> str:
+        return self.product.name
+
     @property
     def total_func(self):
         return self.price * self.quantity
@@ -81,9 +119,6 @@ class Product(models.Model):
     def total_quantity_func(self):
         self.total_quantity = self.quantity
         return self.total_quantity
-
-    def __str__(self) -> str:
-        return self.name
 
 
 class Sale(models.Model):
@@ -117,26 +152,3 @@ class Sale(models.Model):
 
     def __str__(self) -> str:
         return self.product.name
-
-
-class Order(models.Model):
-    """
-        Model to store ordered product, delivery date, distributor's contact, ordered date, product quantity, product price.
-    """
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveSmallIntegerField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    contact = models.CharField(help_text="Distributor contact", max_length=15)
-    delivery_date = models.DurationField()
-    order_date = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(
-        User, related_name="order_created_by", on_delete=models.CASCADE)
-    status = models.CharField(
-        max_length=2, choices=STATUS, blank=True, null=True)
-    amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    balance = models.DecimalField(
-        max_digits=10, decimal_places=2, blank=True, null=True)
-    total_quantity = models.PositiveSmallIntegerField(
-        blank=True, null=True)
-    catergory = models.ManyToManyField(Category)

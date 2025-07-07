@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+    {% for order in orders %}
+
+        {{ order }}
+
+    {% empty %}
+
+        No order here yet.
+    
+    {% endfor %}
+
+{% endblock content %}

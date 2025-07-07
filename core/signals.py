@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 
 from core.forms import ProductForm
-from core.models import Product, Sale
+from core.models import Product, Sale, User, UserProfile
 
 
 @receiver(post_save, sender=Sale)
@@ -20,3 +20,11 @@ def total_quantity_handler(sender, instance, created, **kwargs):
             form.save()
             return "Total quantity for product has been updated."
         return "Total quantity for product could not be updated due to invalid form."
+
+
+@receiver(post_save, sender=User)
+def user_profile_handler(sender, instance, created, **kwargs):
+    if created:
+        userProfile = UserProfile.objects.create(user=instance)
+        userProfile.save()
+        return userProfile

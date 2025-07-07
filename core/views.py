@@ -4,8 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from core.forms import CategoryForm, ProductForm, SaleForm
-from core.models import Category, Product, User, Sale
+from core.forms import CategoryForm, OrderForm, ProductForm, SaleForm
+from core.models import Category, Order, Product, User, Sale
 from core.permissions import is_logged_in, max_authorization
 
 # Create your views here.
@@ -193,9 +193,6 @@ def product_create_view(request):
 
         if form.is_valid():
             form = form.save(commit=False)
-            form.total_quantity = form.total_quantity_func
-            form.total_amount = form.total_func
-            form.balance = form.balance_func
             form.created_by = request.user
             form.save()
             messages.success(request, "Product created successfully.")
@@ -252,7 +249,98 @@ def product_delete_view(request, pk):
 
 
 @login_required(login_url="core:login")
-def sales_list_view(request):
+def order_list_view(request):
+    page = "Order"
+
+    order = Order.objects.all()
+    return render(request, "core/order/order_list.html", {"order": order, "page": page})
+
+
+@login_required(login_url="core:login")
+def order_detail_view(request, pk):
+    page = "Order Detail"
+
+    try:
+        order = Order.objects.get(id=pk)
+    except:
+        messages.error(request, "No order with the provided id.")
+        return redirect("core:orders")
+
+    return render(request, "core/order/order_detail.html", {"order": order, "page": page})
+
+
+@login_required(login_url="core:login")
+def order_create_view(request):
+    page = "Order Create"
+
+    form = OrderForm()
+
+    if request.method == "POST":
+        form = OrderForm(request.POST)
+
+        if form.is_valid():
+            form = form.save(commit=False)
+            form.total_amount = form.total_func
+            form.balance = form.balance_func
+            form.created_by = request.user
+
+            # Todo: Rectify the total quantity property func in the signals
+
+            form.save()
+            messages.success(request, "Order created successfully.")
+            return redirect("core:orders")
+        else:
+            messages.error(request, "Invalid form.")
+            return redirect("core:order-create")
+    return render(request, "core/order/order_create.html", {"form": form, "page": page})
+
+
+@max_authorization
+@login_required(login_url="core:login")
+def order_update_view(request, pk):
+    page = "Order Update"
+
+    try:
+        order = Order.objects.get(id=pk)
+    except:
+        messages.error(request, "No order with the provided id.")
+        return redirect(reverse("core:order-detail", kwargs={"id": pk}))
+
+    form = OrderForm(instance=order)
+    if request.method == "POST":
+        form = OrderForm(request.POST, instance=order)
+
+        if form.is_valid():
+            form.save(commit=False)
+            form.updated_by = request.user
+            form.save()
+            messages.success(request, "Order updated successfully.")
+            return redirect(reverse("core:order-detail", kwargs={"id": pk}))
+        else:
+            messages.error(request, "Invalid values provided.")
+            return redirect(reverse("core:order-update", kwargs={"id": pk}))
+    return render(request, "core/order/order_update.html", {"form": form, "page": page})
+
+
+@max_authorization
+@login_required(login_url="core:login")
+def order_delete_view(request, pk):
+    page = "Order Delete"
+
+    try:
+        order = Order.objects.get(id=pk)
+    except:
+        messages.error(request, "No order for the provided id.")
+        return redirect("core:orders")
+    if request.method == "POST":
+        order.delete()
+        messages.success(request, "Order deleted successfully.")
+        return redirect("core:orders")
+    return render(request, "core/delete.html", {"obj": order, "page": page})
+
+
+@login_required(login_url="core:login")
+def sale_list_view(request):
     page = "Sales"
 
     sales = Sale.objects.all()

@@ -1,0 +1,13 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+    <div class="wrapper">
+         <p>Name: {{ order.product.name }}</p>
+         <p>Description: {{ order.product.description }}</p>
+         <p>Quantity: {{ order.quantity }}</p>
+         <p>Price: {{ order.price }}</p>
+         <p>Total price: {{ order.total_price }}</p>
+    </div>
+
+{% endblock content %}
