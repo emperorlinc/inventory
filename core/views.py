@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 from core.forms import CategoryForm, OrderForm, ProductForm, SaleForm
-from core.models import Category, Order, Product, User, Sale
+from core.models import Category, Order, Product, User, Sale, UserProfile
 from core.permissions import is_logged_in, max_authorization
 
 # Create your views here.
@@ -44,7 +44,7 @@ def register_view(request):
             user = User.objects.create_user(
                 email=email, name=name, password=password)
             user.save()
-            login(request, user)
+            # Return the admin to the userProfile edit page for the newly created user
             return redirect("core:sales")
     return render(request, "core/authentication/register.html", {"page": page})
 
@@ -63,6 +63,7 @@ def login_view(request):
             messages.error(request, "No user with the provided email.")
             return redirect("core:login")
         user = authenticate(request, email=email, password=password)
+        user.is_active = True
         login(request, user)
         messages.success(request, "User logged in successfully.")
         return redirect("core:sales")
@@ -74,9 +75,17 @@ def logout_view(request):
     page = "Logout"
 
     if request.method == "POST":
+        request.user.is_active = False
         logout(request)
         return redirect("core:index")
     return render(request, "core/authentication/logout.html", {"page": page})
+
+
+@max_authorization
+@login_required(login_url="core:login")
+def user_list_view(request):
+    users = UserProfile.objects.all()
+    return render(request, "core/user/user_list.html", {"users": users})
 
 
 @login_required(login_url="core:login")
@@ -428,3 +437,6 @@ def sale_delete_view(request, pk):
         messages.success(request, "Sale deleted successfully.")
         return redirect("core:sales")
     return render(request, "core/delete.html", {"obj": sale, "page": page})
+
+
+# Impliment JWT

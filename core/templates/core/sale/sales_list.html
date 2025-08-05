@@ -5,7 +5,7 @@
 
 <a href="{% url 'core:sale-create' %}">Create sale</a>
 
-<div class="sale-wrapper">
+<div class="wrapper">
     {% for sale in sales %}
     
     <a href="{% url 'core:sale-detail' sale.id %}">{{ sale }}</a>
@@ -18,5 +18,3 @@
 </div>
 
 {% endblock content %}
-
-{% comment %} {{ request.user }} {% endcomment %}

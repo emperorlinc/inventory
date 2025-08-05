@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+    <div class="container">
+        {% for user in users %}
+        <div style="border-bottom: 1px solid black; margin-bottom: 10px;">
+            <p>Name: {{ user.user.name }}</p>
+            <p>Email: {{ user.user.email }}</p>
+            <p>Active status: {{ user.user.is_active }}</p>
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock content %}

@@ -18,7 +18,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, name, password):
-        user = self.create_user(name, email, password)
+        user = self.create_user(email, name, password)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
@@ -28,6 +28,8 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=25, unique=True)
     email = models.EmailField(max_length=64, unique=True)
+    is_active = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -40,6 +42,9 @@ class UserProfile(models.Model):
     phone = models.PositiveIntegerField(unique=True, blank=True, null=True)
     address = models.CharField(max_length=64, blank=True, null=True)
     photo = models.ImageField(upload_to="img", blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.user.name
 
 
 class Category(models.Model):
@@ -82,7 +87,7 @@ class Product(models.Model):
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField()
-    contact = models.CharField(help_text="Distributor contact", max_length=15)
+    Distributor_contact = models.CharField(max_length=15)
     delivery_date = models.DurationField()
     order_date = models.DateTimeField(auto_now=True)
     status = models.CharField(
